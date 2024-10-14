@@ -72,7 +72,7 @@ model = dict(
         temperature=20),  # 10000 for DeformDETR
     bbox_head=dict(
         type='DDQDETRHead',
-        num_classes=80,
+        num_classes=10,
         sync_cls_avg_factor=True,
         loss_cls=dict(
             type='FocalLoss',
@@ -98,6 +98,9 @@ model = dict(
             ])),
     test_cfg=dict(max_per_img=300))
 
+
+# custom hooks
+custom_hooks = [dict(type='SubmissionHook')]
 
 # optimizer
 optim_wrapper = dict(
@@ -137,9 +140,6 @@ auto_scale_lr = dict(base_batch_size=2)
 
 
 default_hooks = dict(visualization=dict(type="DetVisualizationHook",draw=True))
-
-# custom hooks
-custom_hooks = [dict(type='SubmissionHook')]
 
 # data_root = '/data/ephemeral/home/dataset/'
 data_root = '/home/donghun0671/workplace/lv2/dataset/'
