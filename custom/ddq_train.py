@@ -106,58 +106,90 @@ metainfo = {
          (0, 60, 100), (0, 80, 100), (0, 0, 70), (0, 0, 192), (250, 170, 30)]
 }
 
-train_pipeline = [
-    dict(type='LoadImageFromFile', backend_args=_base_.backend_args),
-    dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='RandomFlip', prob=0.5),
+img_scale = (1280, 1280)
+
+albu_train_transforms = [
     dict(
-        type='RandomChoice',
+        type='OneOf',
         transforms=[
-            [
-                dict(
-                    type='RandomChoiceResize',
-                    scales=[(480, 1333), (512, 1333), (544, 1333), (576, 1333),
-                            (608, 1333), (640, 1333), (672, 1333), (704, 1333),
-                            (736, 1333), (768, 1333), (800, 1333)],
-                    keep_ratio=True)
-            ],
-            [
-                dict(
-                    type='RandomChoiceResize',
-                    # The radio of all image in train dataset < 7
-                    # follow the original implement
-                    scales=[(400, 4200), (500, 4200), (600, 4200)],
-                    keep_ratio=True),
-                dict(
-                    type='RandomCrop',
-                    crop_type='absolute_range',
-                    crop_size=(384, 600),
-                    allow_negative_crop=True),
-                dict(
-                    type='RandomChoiceResize',
-                    scales=[(480, 1333), (512, 1333), (544, 1333), (576, 1333),
-                            (608, 1333), (640, 1333), (672, 1333), (704, 1333),
-                            (736, 1333), (768, 1333), (800, 1333)],
-                    keep_ratio=True)
-            ]
-        ]),
+            dict(type='Flip',p=1.0),
+            dict(type='RandomRotate90',p=1.0)
+        ],
+        p=0.5),
+    dict(
+        type='OneOf',
+        transforms=[
+            dict(
+                type='RandomBrightnessContrast',
+                brightness_limit=(-0.1, 0.15),
+                contrast_limit=(-0.1, 0.15),
+                p=1.0),
+            dict(
+                type='CLAHE',
+                clip_limit=(2, 6),
+                tile_grid_size=(8, 8),
+                p=1.0),
+        ],
+        p=0.5),
+    dict(type='HueSaturationValue', hue_shift_limit=15, sat_shift_limit=25, val_shift_limit=10, p=0.5),
+    dict(type='GaussNoise', var_limit=(20, 100), p=0.3),
+    dict(
+        type='OneOf',
+        transforms=[
+            dict(type='Blur', p=1.0),
+            dict(type='GaussianBlur', p=1.0),
+            dict(type='MedianBlur', blur_limit=5, p=1.0),
+            dict(type='MotionBlur', p=1.0)
+        ],
+        p=0.1),
+]
+
+train_pipeline = [
+    dict(
+        type='custom_mosaic_copy_paste',paste_by_box=True),
+    dict(
+        type='Albu',
+        transforms=albu_train_transforms,
+        bbox_params=dict(
+            type='BboxParams',
+            format='pascal_voc',
+            label_fields=['gt_bboxes_labels', 'gt_ignore_flags'],
+            min_visibility=0.0,
+            filter_lost_elements=True),
+        keymap={
+            'img': 'image',
+            'gt_bboxes': 'bboxes'
+        },
+        skip_img_without_anno=True),
+    dict(type='FilterAnnotations', min_gt_bbox_wh=(50, 50), keep_empty=False),
+    dict(type='RandomFlip', prob=0.5),
+    dict(type = 'RandomCrop',crop_size=img_scale),
     dict(type='PackDetInputs')
 ]
 
 data_root='/data/ephemeral/home/dataset'
 
+train_dataset = dict(
+        _delete_=True,
+    # use MultiImageMixDataset wrapper to support mosaic and mixup
+    type='MultiImageMixDataset',
+    dataset=dict(
+        type='CocoDataset',
+        metainfo = metainfo,
+        data_root=data_root,
+        ann_file='train_2_annot.json',
+        data_prefix=dict(img= ''),
+        filter_cfg=dict(filter_empty_gt=False),
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations', with_bbox=True)
+        ]),
+    pipeline=train_pipeline)
+
 train_dataloader = dict(
     batch_size=1,
-    dataset=dict(
-        _delete_=True,
-        metainfo = metainfo,
-        type=_base_.dataset_type,
-        data_root=data_root,
-        ann_file='train.json',
-        data_prefix=dict(img= data_root),
-        filter_cfg=dict(filter_empty_gt=False),
-        pipeline=train_pipeline,
-        backend_args=_base_.backend_args))
+    num_workers=1,
+    dataset=train_dataset)
 
 # optimizer
 optim_wrapper = dict(
@@ -167,16 +199,45 @@ optim_wrapper = dict(
     paramwise_cfg=dict(custom_keys={'backbone': dict(lr_mult=0.05)}))
 
 # learning policy
-max_epochs = 10
+max_epochs = 12
 train_cfg = dict(
     type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=1)
 
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
-val_dataloader = None
-val_cfg = None
-val_evaluator = None
+test_pipeline = [  # Testing data processing pipeline
+    dict(type='LoadImageFromFile'),  # First pipeline to load images from file path
+    dict(type='Resize', scale=(1024, 1024), keep_ratio=True),  # Pipeline that resizes the images
+    dict(
+        type='PackDetInputs',  # Pipeline that formats the annotation data and decides which keys in the data should be packed into data_samples
+        meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
+                   'scale_factor'))
+]
+
+val_dataloader = dict(  # Validation dataloader config
+    batch_size=1,  # Batch size of a single GPU. If batch-size > 1, the extra padding area may influence the performance.
+    num_workers=1,  # Worker to pre-fetch data for each single GPU
+    persistent_workers=True,  # If ``True``, the dataloader will not shut down the worker processes after an epoch end, which can accelerate training speed.
+    drop_last=False,  # Whether to drop the last incomplete batch, if the dataset size is not divisible by the batch size
+    sampler=dict(
+        type='DefaultSampler',
+        shuffle=False),  # not shuffle during validation and testing
+    dataset=dict(
+        type='CocoDataset',
+        metainfo = metainfo,
+        data_root=data_root,
+        ann_file='validation_2_annot.json',
+        data_prefix=dict(img=''),
+        test_mode=True,  # Turn on the test mode of the dataset to avoid filtering annotations or images
+        pipeline=test_pipeline))
+
+val_evaluator = dict(  # Validation evaluator config
+    type='CocoMetric',  # The coco metric used to evaluate AR, AP, and mAP for detection and instance segmentation
+    ann_file=data_root + '/validation_2_annot.json',  # Annotation file path
+    metric=['bbox'],  # Metrics to be evaluated, `bbox` for detection and `segm` for instance segmentation
+    format_only=False,
+    classwise = True)
 
 param_scheduler = [
     dict(
@@ -190,7 +251,7 @@ param_scheduler = [
         begin=0,
         end=max_epochs,
         by_epoch=True,
-        milestones=[20, 26],
+        milestones=[6, 8],
         gamma=0.1)
 ]
 
@@ -215,3 +276,5 @@ visualizer = dict(
 # USER SHOULD NOT CHANGE ITS VALUES.
 # base_batch_size = (8 GPUs) x (2 samples per GPU)
 auto_scale_lr = dict(base_batch_size=1)
+
+load_from = "https://download.openmmlab.com/mmdetection/v3.0/ddq/ddq_detr_swinl_30e.pth"

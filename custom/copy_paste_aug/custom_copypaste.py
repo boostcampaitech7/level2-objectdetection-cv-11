@@ -18,6 +18,7 @@ from mmcv.transforms.utils import avoid_cache_randomness, cache_randomness
 from mmengine.dataset import BaseDataset
 from mmengine.utils import is_str
 from numpy import random
+import random as rd
 
 from mmdet.registry import TRANSFORMS
 from mmdet.structures.bbox import HorizontalBoxes, autocast_box_type
@@ -438,6 +439,7 @@ class custom_mosaic_copy_paste(BaseTransform):
         center_position = (center_x, center_y)
 
         loc_strs = ('center','top_left', 'top_right', 'bottom_left', 'bottom_right') #4부분으로 나누고
+        mosaic_strs = rd.choices(loc_strs[1:], k=2)
         for i, loc in enumerate(loc_strs):
             if loc == 'center':
                 bg_results_patch = copy.deepcopy(results) #idx 이미지
@@ -459,7 +461,7 @@ class custom_mosaic_copy_paste(BaseTransform):
                 mosaic_bboxes.append(gt_bboxes_i)
                 mosaic_bboxes_labels.append(gt_bboxes_labels_i)
                 mosaic_ignore_flags.append(gt_ignore_flags_i)
-            else:
+            elif loc in mosaic_strs:
                 results['mix_results'][i - 1]= self._copy_paste(results['mix_results'][i - 1] )
                 results_patch = copy.deepcopy(results['mix_results'][i - 1]) #나머지 랜덤 3개
                 mask_i = np.where(np.any(results['mix_results'][i - 1]['gt_masks'].masks,axis=0),1,0)
