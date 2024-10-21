@@ -1,0 +1,23 @@
+nc: 10
+path: /data/ephemeral/home/ay_yolo/yolo_dataset_ay
+train: /data/ephemeral/home/ay_yolo/yolo_dataset_ay/pseudo07/images
+val: /data/ephemeral/home/ay_yolo/yolo_dataset_ay/val_split/images
+test: /data/ephemeral/home/ay_yolo/yolo_dataset_ay/test
+
+labels:
+  train: /data/ephemeral/home/ay_yolo/yolo_dataset_ay/pseudo07/labels
+  val: /data/ephemeral/home/ay_yolo/yolo_dataset/val_split/labels
+
+names:
+  0: General trash
+  1: Paper
+  2: Paper pack
+  3: Metal
+  4: Glass
+  5: Plastic
+  6: Styrofoam
+  7: Plastic bag
+  8: Battery
+  9: Clothing
+
+
