@@ -1,5 +1,5 @@
 _base_ = [
-    '../../configs/_base_/datasets/coco_detection_trash_aug_3.py', '../../configs/_base_/default_runtime.py'
+    '../../configs/_base_/datasets/coco_detection.py', '../../configs/_base_/default_runtime.py'
 ]
 pretrained = 'https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_large_patch4_window12_384_22k.pth'  # noqa: E501
 model = dict(
@@ -110,7 +110,7 @@ optim_wrapper = dict(
     paramwise_cfg=dict(custom_keys={'backbone': dict(lr_mult=0.05)}))
 
 # learning policy
-max_epochs = 12
+max_epochs = 25
 train_cfg = dict(
     type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=1)
 
@@ -118,19 +118,27 @@ val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
 param_scheduler = [
+    # dict(
+    #     type='LinearLR',
+    #     start_factor=0.0001,
+    #     by_epoch=False,
+    #     begin=0,
+    #     end=2000),
+    # dict(
+    #     type='MultiStepLR',
+    #     begin=0,
+    #     end=max_epochs,
+    #     by_epoch=True,
+    #     milestones=[20, 26],
+    #     gamma=0.1)
     dict(
-        type='LinearLR',
-        start_factor=0.0001,
-        by_epoch=False,
+        type='CosineAnnealingLR',
+        eta_min=0.0,
         begin=0,
-        end=2000),
-    dict(
-        type='MultiStepLR',
-        begin=0,
+        T_max=max_epochs,
         end=max_epochs,
         by_epoch=True,
-        milestones=[20, 26],
-        gamma=0.1)
+        convert_to_iter_based=True)    
 ]
 
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
@@ -142,7 +150,8 @@ auto_scale_lr = dict(base_batch_size=2)
 default_hooks = dict(visualization=dict(type="DetVisualizationHook",draw=True))
 
 # data_root = '/data/ephemeral/home/dataset/'
-data_root = '/home/donghun0671/workplace/lv2/dataset/'
+data_root = '/home/donghun0671/workplace/lv2/sr_dataset/'
+data_root_test = '/home/donghun0671/workplace/lv2/dataset/'
 
 metainfo = {
     'classes': ('General trash', 'Paper', 'Paper pack', 'Metal', 'Glass',
@@ -160,7 +169,7 @@ train_dataloader = dict(
         type='CocoDataset',
         data_root=data_root,
         metainfo=metainfo,
-        ann_file='train_split.json',
+        ann_file='kfolds/integrated_train_kfold_0.json',
         data_prefix=dict(img=''),
         pipeline=[
             dict(type='LoadImageFromFile', backend_args=dict()),
@@ -191,7 +200,7 @@ val_dataloader = dict(
         type='CocoDataset',
         data_root=data_root,
         metainfo=metainfo,
-        ann_file='val_split.json',
+        ann_file='kfolds/integrated_val_kfold_0.json',
         data_prefix=dict(img=''),
         pipeline=[
             dict(type='LoadImageFromFile', backend_args=dict()),
@@ -204,11 +213,11 @@ val_dataloader = dict(
         ]))
 
 test_dataloader = dict(
-    batch_size=1,
+    batch_size=8,
     num_workers=4,
     dataset=dict(
         type='CocoDataset',
-        data_root=data_root,
+        data_root=data_root_test,
         metainfo=metainfo,
         ann_file='test.json',
         data_prefix=dict(img=''),
@@ -225,7 +234,7 @@ test_dataloader = dict(
 ### Evaluators ###
 val_evaluator = dict(
     type='CocoMetric',
-    ann_file=data_root + 'val_split.json',
+    ann_file=data_root + 'kfolds/integrated_val_kfold_0.json',
     metric='bbox',
     format_only=False,
     classwise=True,
@@ -233,7 +242,7 @@ val_evaluator = dict(
 
 test_evaluator = dict(
     type='CocoMetric',
-    ann_file=data_root + 'test.json',
+    ann_file=data_root_test + 'test.json',
     metric='bbox',
     format_only=False,
     classwise=True,
@@ -247,7 +256,7 @@ visualizer = dict(
              init_kwargs=dict(
                  entity='hanseungsoo63-naver',
                  project='ddq',
-                 name='recycle_ddq-detr-4scale_r50_8xb2-12e_coco'))],
+                 name='recycle_ddq-detr-4scale_r50_8xb2-12e_coco_crop_aug'))],
     name='visualizer'    
     )
 

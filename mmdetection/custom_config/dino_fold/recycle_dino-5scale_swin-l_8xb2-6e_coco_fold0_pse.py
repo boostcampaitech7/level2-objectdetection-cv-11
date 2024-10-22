@@ -124,11 +124,66 @@ color_space = [
 
 ### Augmenation Rule
 image_size = (1024, 1024)
+
+albu_train_transforms = [
+    dict(
+        type='OneOf',
+        transforms=[
+            dict(type='Flip',p=1.0),
+            dict(type='RandomRotate90',p=1.0)
+        ],
+        p=0.5),
+    dict(
+        type='OneOf',
+        transforms=[
+            dict(
+                type='RandomBrightnessContrast',
+                brightness_limit=(-0.1, 0.15),
+                contrast_limit=(-0.1, 0.15),
+                p=1.0),
+            dict(
+                type='CLAHE',
+                clip_limit=(2, 6),
+                tile_grid_size=(8, 8),
+                p=1.0),
+        ],
+        p=0.5),
+    dict(type='HueSaturationValue', hue_shift_limit=15, sat_shift_limit=25, val_shift_limit=10, p=0.5),
+    dict(type='GaussNoise', var_limit=(20, 100), p=0.3),
+    dict(
+        type='OneOf',
+        transforms=[
+            dict(type='Blur', p=1.0),
+            dict(type='GaussianBlur', p=1.0),
+            dict(type='MedianBlur', blur_limit=5, p=1.0),
+            dict(type='MotionBlur', p=1.0)
+        ],
+        p=0.1),
+]
+
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=_base_.backend_args),
     dict(type='LoadAnnotations', with_bbox=True),
+    ############# copypaste
+    dict(
+        type='custom_mosaic_copy_paste',paste_by_box=True),
+    dict(
+        type='Albu',
+        transforms=albu_train_transforms,
+        bbox_params=dict(
+            type='BboxParams',
+            format='pascal_voc',
+            label_fields=['gt_bboxes_labels', 'gt_ignore_flags'],
+            min_visibility=0.0,
+            filter_lost_elements=True),
+        keymap={
+            'img': 'image',
+            'gt_bboxes': 'bboxes'
+        },
+        skip_img_without_anno=True),
+    dict(type='FilterAnnotations', min_gt_bbox_wh=(50, 50), keep_empty=True),   
+    ##############
     dict(type='Resize', scale=image_size, keep_ratio=True),
-    dict(type='RandomFlip', prob=0.5),
     dict(# LSJ
         type='RandomResize',
         scale=image_size,
@@ -154,48 +209,6 @@ test_pipeline = [
         meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
                    'scale_factor'))
 ]
-
-# data_root = '/data/ephemeral/home/dataset/'
-data_root = '/home/donghun0671/workplace/lv2/dataset/'
-metainfo = {
-    'classes': ('General trash', 'Paper', 'Paper pack', 'Metal', 'Glass',
-                'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing',),
-    'palette': [
-        (220, 20, 60), (119, 11, 32), (0, 0, 230), (106, 0, 228), (60, 20, 220),
-        (0, 80, 100), (0, 0, 70), (50, 0, 192), (250, 170, 30), (255, 0, 0)
-    ]
-}
-
-### JSON
-train_dataloader = dict(
-    batch_size=2,
-    num_workers=4,
-    dataset=dict(
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='train_kfold_0.json',
-        data_prefix=dict(img=''),
-        pipeline=train_pipeline))
-
-val_dataloader = dict(
-    batch_size=1,
-    num_workers=4,
-    dataset=dict(
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='val_kfold_0.json',
-        data_prefix=dict(img=''),
-        pipeline=test_pipeline))
-
-test_dataloader = dict(
-    batch_size=8,
-    num_workers=4,
-    dataset=dict(
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='test.json',
-        data_prefix=dict(img=''),
-        pipeline=test_pipeline))
 
 tta_model = dict(
     type='DetTTAModel',
@@ -224,10 +237,65 @@ tta_pipeline = [
         ])
 ]
 
+# data_root = '/data/ephemeral/home/dataset/'
+data_root = '/home/donghun0671/workplace/lv2/dataset/'
+
+metainfo = {
+    'classes': ('General trash', 'Paper', 'Paper pack', 'Metal', 'Glass',
+                'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing',),
+    'palette': [
+        (220, 20, 60), (119, 11, 32), (0, 0, 230), (106, 0, 228), (60, 20, 220),
+        (0, 80, 100), (0, 0, 70), (50, 0, 192), (250, 170, 30), (255, 0, 0)
+    ]
+}
+
+train_dataset = dict(
+     _delete_=True,
+ # use MultiImageMixDataset wrapper to support mosaic and mixup
+ type='MultiImageMixDataset',
+ dataset=dict(
+     type='CocoDataset',
+     metainfo = metainfo,
+     data_root=data_root,
+     ann_file='train_pseudo_kfold_0.json',
+     data_prefix=dict(img= ''),
+     filter_cfg=dict(filter_empty_gt=True),
+     pipeline=[
+         dict(type='LoadImageFromFile'),
+         dict(type='LoadAnnotations', with_bbox=True)
+     ]),
+ pipeline=train_pipeline)
+
+### JSON
+train_dataloader = dict(
+    batch_size=2,
+    num_workers=4,
+    dataset=train_dataset)
+
+val_dataloader = dict(
+    batch_size=2,
+    num_workers=4,
+    dataset=dict(
+        data_root=data_root,
+        metainfo=metainfo,
+        ann_file='val_pseudo_kfold_0.json',
+        data_prefix=dict(img=''),
+        pipeline=test_pipeline))
+
+test_dataloader = dict(
+    batch_size=8,
+    num_workers=4,
+    dataset=dict(
+        data_root=data_root,
+        metainfo=metainfo,
+        ann_file='test.json',
+        data_prefix=dict(img=''),
+        pipeline=test_pipeline))
+
 ### evaluation ###
 val_evaluator = dict(
     type='CocoMetric',
-    ann_file=data_root + 'val_kfold_0.json',
+    ann_file=data_root + 'val_pseudo_kfold_0.json',
     metric='bbox',
     format_only=False,
     classwise=True,
@@ -291,7 +359,7 @@ visualizer = dict(
              init_kwargs=dict(
                  entity='hanseungsoo63-naver',
                  project='dino',
-                 name='swin-l_5scale_original_epochs12_fold0_tta'))],
+                 name='swin-l_5scale_original_epochs12_pse_fold0'))],
     name='visualizer'    
     )
 

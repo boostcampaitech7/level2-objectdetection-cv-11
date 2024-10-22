@@ -155,48 +155,6 @@ test_pipeline = [
                    'scale_factor'))
 ]
 
-# data_root = '/data/ephemeral/home/dataset/'
-data_root = '/home/donghun0671/workplace/lv2/dataset/'
-metainfo = {
-    'classes': ('General trash', 'Paper', 'Paper pack', 'Metal', 'Glass',
-                'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing',),
-    'palette': [
-        (220, 20, 60), (119, 11, 32), (0, 0, 230), (106, 0, 228), (60, 20, 220),
-        (0, 80, 100), (0, 0, 70), (50, 0, 192), (250, 170, 30), (255, 0, 0)
-    ]
-}
-
-### JSON
-train_dataloader = dict(
-    batch_size=2,
-    num_workers=4,
-    dataset=dict(
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='train_kfold_0.json',
-        data_prefix=dict(img=''),
-        pipeline=train_pipeline))
-
-val_dataloader = dict(
-    batch_size=1,
-    num_workers=4,
-    dataset=dict(
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='val_kfold_0.json',
-        data_prefix=dict(img=''),
-        pipeline=test_pipeline))
-
-test_dataloader = dict(
-    batch_size=8,
-    num_workers=4,
-    dataset=dict(
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='test.json',
-        data_prefix=dict(img=''),
-        pipeline=test_pipeline))
-
 tta_model = dict(
     type='DetTTAModel',
     tta_cfg=dict(nms=dict(type='nms', iou_threshold=0.5), max_per_img=300))
@@ -224,16 +182,60 @@ tta_pipeline = [
         ])
 ]
 
+# data_root = '/data/ephemeral/home/dataset/'
+data_root = '/home/donghun0671/workplace/lv2/sr_dataset/'
+data_root_test = '/home/donghun0671/workplace/lv2/dataset/'
+
+metainfo = {
+    'classes': ('General trash', 'Paper', 'Paper pack', 'Metal', 'Glass',
+                'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing',),
+    'palette': [
+        (220, 20, 60), (119, 11, 32), (0, 0, 230), (106, 0, 228), (60, 20, 220),
+        (0, 80, 100), (0, 0, 70), (50, 0, 192), (250, 170, 30), (255, 0, 0)
+    ]
+}
+
+### JSON
+train_dataloader = dict(
+    batch_size=2,
+    num_workers=4,
+    dataset=dict(
+        data_root=data_root,
+        metainfo=metainfo,
+        ann_file='kfolds/integrated_train_kfold_4.json',
+        data_prefix=dict(img=''),
+        pipeline=train_pipeline))
+
+val_dataloader = dict(
+    batch_size=2,
+    num_workers=4,
+    dataset=dict(
+        data_root=data_root,
+        metainfo=metainfo,
+        ann_file='kfolds/integrated_val_kfold_4.json',
+        data_prefix=dict(img=''),
+        pipeline=test_pipeline))
+
+test_dataloader = dict(
+    batch_size=8,
+    num_workers=4,
+    dataset=dict(
+        data_root=data_root_test,
+        metainfo=metainfo,
+        ann_file='test.json',
+        data_prefix=dict(img=''),
+        pipeline=test_pipeline))
+
 ### evaluation ###
 val_evaluator = dict(
     type='CocoMetric',
-    ann_file=data_root + 'val_kfold_0.json',
+    ann_file=data_root + 'kfolds/integrated_val_kfold_4.json',
     metric='bbox',
     format_only=False,
     classwise=True,
     )
 
-test_evaluator = dict(ann_file=data_root + 'test.json')
+test_evaluator = dict(ann_file=data_root_test + 'test.json')
 
 #### Learning Policy ####
 max_epochs = 12
@@ -291,7 +293,7 @@ visualizer = dict(
              init_kwargs=dict(
                  entity='hanseungsoo63-naver',
                  project='dino',
-                 name='swin-l_5scale_original_epochs12_fold0_tta'))],
+                 name='swin-l_5scale_original_epochs12_SR_fold4'))],
     name='visualizer'    
     )
 

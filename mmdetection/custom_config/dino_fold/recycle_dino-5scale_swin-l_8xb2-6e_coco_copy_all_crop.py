@@ -156,7 +156,9 @@ test_pipeline = [
 ]
 
 # data_root = '/data/ephemeral/home/dataset/'
-data_root = '/home/donghun0671/workplace/lv2/dataset/'
+data_root = '/home/donghun0671/workplace/lv2/sr_dataset/'
+data_root_origin = '/home/donghun0671/workplace/lv2/dataset/'
+
 metainfo = {
     'classes': ('General trash', 'Paper', 'Paper pack', 'Metal', 'Glass',
                 'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing',),
@@ -169,74 +171,47 @@ metainfo = {
 ### JSON
 train_dataloader = dict(
     batch_size=2,
-    num_workers=4,
+    num_workers=1,
     dataset=dict(
         data_root=data_root,
         metainfo=metainfo,
-        ann_file='train_kfold_0.json',
+        ann_file='integrated_train.json',
         data_prefix=dict(img=''),
         pipeline=train_pipeline))
 
 val_dataloader = dict(
-    batch_size=1,
-    num_workers=4,
+    batch_size=2,
+    num_workers=1,
     dataset=dict(
-        data_root=data_root,
+        data_root=data_root_origin,
         metainfo=metainfo,
-        ann_file='val_kfold_0.json',
+        ann_file='val_split.json',
         data_prefix=dict(img=''),
         pipeline=test_pipeline))
 
 test_dataloader = dict(
     batch_size=8,
-    num_workers=4,
+    num_workers=1,
     dataset=dict(
-        data_root=data_root,
+        data_root=data_root_origin,
         metainfo=metainfo,
         ann_file='test.json',
         data_prefix=dict(img=''),
         pipeline=test_pipeline))
 
-tta_model = dict(
-    type='DetTTAModel',
-    tta_cfg=dict(nms=dict(type='nms', iou_threshold=0.5), max_per_img=300))
-img_scales=[(2000, 480), (2000, 1200)]
-tta_pipeline = [ 
-    dict(type='LoadImageFromFile', backend_args=None),
-    dict(
-        type='TestTimeAug',
-        transforms=[
-            [
-                dict(type='Resize', scale=s, keep_ratio=True)
-                for s in img_scales
-            ],
-            [
-                dict(type='RandomFlip', prob=1.),
-                dict(type='RandomFlip', prob=0.)
-            ],
-            [dict(type='LoadAnnotations', with_bbox=True)],
-            [
-                dict(
-                    type='PackDetInputs',
-                    meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
-                               'scale_factor', 'flip', 'flip_direction'))
-            ]
-        ])
-]
-
 ### evaluation ###
 val_evaluator = dict(
     type='CocoMetric',
-    ann_file=data_root + 'val_kfold_0.json',
+    ann_file=data_root_origin + 'val_split.json',
     metric='bbox',
     format_only=False,
     classwise=True,
     )
 
-test_evaluator = dict(ann_file=data_root + 'test.json')
+test_evaluator = dict(ann_file=data_root_origin + 'test.json')
 
 #### Learning Policy ####
-max_epochs = 12
+max_epochs = 25
 
 train_cfg = dict(
     type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=1)
@@ -291,7 +266,7 @@ visualizer = dict(
              init_kwargs=dict(
                  entity='hanseungsoo63-naver',
                  project='dino',
-                 name='swin-l_5scale_original_epochs12_fold0_tta'))],
+                 name='swin-l_5scale_original_epochs25_SR_ALL'))],
     name='visualizer'    
     )
 
