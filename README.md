@@ -1,6 +1,6 @@
 ## Copy Paste 활용
 1. `custom`폴더의 `copy_paste_aug` 폴더를 `mmdetection/mmdet`에 넣어줍니다.
-2. `mmdet/transforms/__init__.py`에 아래와 같은 두 코드를 넣어줍니다.
+2. `mmdet/datasets/transforms/__init__.py`에 아래와 같은 두 코드를 넣어줍니다.
    ```
    from mmdet.copy_paste_aug.custom_loader import LoadAnnotationswithbox
    from mmdet.copy_paste_aug.custom_copypaste import custom_CopyPaste
