@@ -106,47 +106,42 @@ metainfo = {
          (0, 60, 100), (0, 80, 100), (0, 0, 70), (0, 0, 192), (250, 170, 30)]
 }
 
-img_scale = (1280, 1280)
+img_scale = (1024, 1024)
 
 albu_train_transforms = [
     dict(
-        type='ShiftScaleRotate',
-        shift_limit=0.0625,
-        scale_limit=0.0,
-        rotate_limit=0,
-        interpolation=1,
-        p=0.5),
-    dict(
-        type='RandomBrightnessContrast',
-        brightness_limit=[0.1, 0.3],
-        contrast_limit=[0.1, 0.3],
+        type='OneOf',
+        transforms=[
+            dict(type='Flip',p=1.0),
+            dict(type='RandomRotate90',p=1.0)
+        ],
         p=0.5),
     dict(
         type='OneOf',
         transforms=[
             dict(
-                type='RGBShift',
-                r_shift_limit=10,
-                g_shift_limit=10,
-                b_shift_limit=10,
+                type='RandomBrightnessContrast',
+                brightness_limit=(-0.1, 0.15),
+                contrast_limit=(-0.1, 0.15),
                 p=1.0),
             dict(
-                type='HueSaturationValue',
-                hue_shift_limit=20,
-                sat_shift_limit=30,
-                val_shift_limit=20,
-                p=1.0)
+                type='CLAHE',
+                clip_limit=(2, 6),
+                tile_grid_size=(8, 8),
+                p=1.0),
         ],
-        p=0.1),
-    dict(type='JpegCompression', quality_lower=85, quality_upper=95, p=0.2),
-    dict(type='ChannelShuffle', p=0.1),
+        p=0.5),
+    dict(type='HueSaturationValue', hue_shift_limit=15, sat_shift_limit=25, val_shift_limit=10, p=0.5),
+    dict(type='GaussNoise', var_limit=(20, 100), p=0.3),
     dict(
         type='OneOf',
         transforms=[
-            dict(type='Blur', blur_limit=9, p=1.0),
-            dict(type='MedianBlur', blur_limit=9, p=1.0)
+            dict(type='Blur', p=1.0),
+            dict(type='GaussianBlur', p=1.0),
+            dict(type='MedianBlur', blur_limit=5, p=1.0),
+            dict(type='MotionBlur', p=1.0)
         ],
-        p=0.3),
+        p=0.1),
 ]
 
 train_pipeline = [
@@ -166,9 +161,9 @@ train_pipeline = [
             'gt_bboxes': 'bboxes'
         },
         skip_img_without_anno=True),
-    dict(type='FilterAnnotations', min_gt_bbox_wh=(50, 50), keep_empty=False),
+    dict(type='FilterAnnotations', min_gt_bbox_wh=(50, 50), keep_empty=True),
     dict(type='RandomFlip', prob=0.5),
-    dict(type = 'RandomCrop',crop_size=img_scale),
+    dict(type='Resize', scale=(1024, 1024), keep_ratio=True),
     dict(type='PackDetInputs')
 ]
 
@@ -182,9 +177,9 @@ train_dataset = dict(
         type='CocoDataset',
         metainfo = metainfo,
         data_root=data_root,
-        ann_file='train_2_annot.json',
+        ann_file='dino7360_pseudo_label_0.25_real.json',
         data_prefix=dict(img= ''),
-        filter_cfg=dict(filter_empty_gt=False),
+        filter_cfg=dict(filter_empty_gt=True),
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations', with_bbox=True)
@@ -192,8 +187,8 @@ train_dataset = dict(
     pipeline=train_pipeline)
 
 train_dataloader = dict(
-    batch_size=1,
-    num_workers=1,
+    batch_size=3,
+    num_workers=8,
     dataset=train_dataset)
 
 # optimizer
@@ -204,7 +199,7 @@ optim_wrapper = dict(
     paramwise_cfg=dict(custom_keys={'backbone': dict(lr_mult=0.05)}))
 
 # learning policy
-max_epochs = 12
+max_epochs = 30
 train_cfg = dict(
     type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=1)
 
@@ -247,7 +242,7 @@ val_evaluator = dict(  # Validation evaluator config
 param_scheduler = [
     dict(
         type='LinearLR',
-        start_factor=0.0001,
+        start_factor=0.00001,
         by_epoch=False,
         begin=0,
         end=2000),
