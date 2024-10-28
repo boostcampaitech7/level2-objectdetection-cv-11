@@ -100,6 +100,7 @@
 - Hardwares: Intel(R) Xeon(R) Gold 5120, Tesla V100-SXM2 32GB × 4
 - Framework: Pytorch, Detectron2 v0.6, Ultralytics v8.1, MMDetection v3.3.0
 - Cowork Tools: Github, Weight and Bias, Notion, Zoom
+- Other Tools: Jupyter, Wandb, OpenCV
 
 </br>
 
