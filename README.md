@@ -375,6 +375,13 @@ Frameworks : Detectron2 v0.6, Ultralytics v8.1, mmDetection v3.3.0
 ## Conclusion
 ### LB TImelines
 위와 같은 과정을 거치며 mAP50 값이 우상향하는 그래프를 그리며 성능을 향상시킬 수 있었다.
+ <center>
+<img src="https://github.com/user-attachments/assets/027aed8a-b356-4927-a5c5-fa60aed3d31c" width="700" height="">
+<div align="center">
+   <sup>LB Timelines Graph. 전체적으로 mAP를 우상향시키는 방향으로 프로젝트가 진행되었다.(Public)
+</sup>
+</div>
+</center>
 
 ### Contribution
 1. Augmentation, Copy Paste, Pseudo Labeling, Stratified KFold, Super Resolution 등의 기법을 도입함으로써 모델 성능을 크게 향상
