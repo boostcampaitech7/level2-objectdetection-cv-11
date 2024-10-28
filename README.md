@@ -140,14 +140,14 @@
     <tr>
       <td>
         <figure>
-          <img src="https://github.com/user-attachments/assets/751f771a-223e-4aae-b6aa-37fd19530d01" width="600">
-          <figcaption></figcaption>
+          <img src="https://github.com/user-attachments/assets/8b951206-eab6-4509-b766-e066bdf5a9a5" width="1300">
+          <figcaption>Heatmaps Showing Bounding Box Placement</figcaption>
         </figure>
       </td>
       <td>
         <figure>
-        <img src="" width="600">
-        <figcaption></figcaption>
+        <img src="https://github.com/user-attachments/assets/751f771a-223e-4aae-b6aa-37fd19530d01" width="2000">
+        <figcaption>A heatmap based on the center points of bounding boxes for each class</figcaption>
         </figure>
       </td>
     </tr>
@@ -155,20 +155,61 @@
 </div>
 
 
-- 분포를 확인한 결과, 클래스 별 불균형이 심하여 KFold 대신 Train/Validation에 동일한 분포를 적용하기 위해 Stratified K-Fold 적용하였다.
-- Stratified group k-fold (k=5)를 적용하여 5쌍의 train, validation set을 구성하여 학습에 적용하였다.
+- 모든 클래스에서 이미지 내 BBOX들의 위치 분포를 분석한 결과, 대부분의 BBOX(객체)가 이미지 중심부에 주로 위치하고 있는 경향이 나타났다.(정 가운데에 bbox가 몰려 있다.)
+
+
+> ### Aspect Ratio for bounding boxes by class
 
 
 <center>
-<img src="">
 <div align="center">
-  <sup>Object Bounding Box distribution of each class
-</sup>
+  <img src="https://github.com/user-attachments/assets/6e1f1924-c2bc-43aa-ada5-b24794f02396" width="1000" height="">
 </div>
 </center>
 
-- 이미지 내 객체들의 위치 분포를 분석한 결과, 대부분의 객체가 이미지 중심부에 주로 위치하고 있는 경향이 나타났다.
-</br>
+- 모든 클래스에서 평균 Aspect Ratio가 1보다 크다.
+- Aspect ratio > 1: 가로가 세로보다 긴 BBOX를 의미한다. 즉, 가로로 길쭉한 모양이다.
+
+  
+
+> ### DDQ initial Fine Tuning 모델을 사용해 학습 후 결과를 EDA 진행
+
+
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <figure>
+          <img src="https://github.com/user-attachments/assets/42b438da-3464-4afd-98b2-256fe93b3686" width="600">
+          <figcaption>Class별 Classification 지표 ; Confusion Matrix</figcaption>
+        </figure>
+      </td>
+      <td>
+        <figure>
+        <img src="https://github.com/user-attachments/assets/97ec5cd4-6736-4d57-bd07-908b1ddfd0b5" width="600">
+        <figcaption>Class별 Classification 지표</figcaption>
+        </figure>
+      </td>
+    </tr>
+  </table>
+</div>
+
+- Plastic, general trash의 recall을 늘리기 위한 전략이 필요하다.
+- (Plastic과 Glass) (General trash와 Plastic Bag)간의 혼동 비율을 감소하는 전략이 필요하다.
+- General Trash와 Paper를 못 잡는 경우를 줄이는 전략이 필요하다.
+  
+
+<center>
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/e56f8e18-4567-41e4-8489-f429fae4e595" width="500" height="">
+</div>
+</center>
+
+- 대부분 작은 object들을 잘 detect 하지 못했다. (EX : 쓰레기 봉투 안에 있는 쓰레기들)
+
+
+
+
 
 ##  Pipeline
 <center>
