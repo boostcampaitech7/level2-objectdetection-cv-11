@@ -34,9 +34,7 @@
 
 - **Images & Size :**   9754장(train 4883, test 4871) & (1024, 1024)
 - **classes :** General trash, Paper, Paper pack, Metal, Glass, Plastic, Styrofoam, Plastic bag, Battery, Clothing
-<!-- - **Annotations :** Image size, class,  -->
 
-<!-- <br/> -->
 </br>
 
 ## Members 
@@ -314,9 +312,6 @@
 
 
 
-</br>
-
-
 > ### Models
 - 1-stage 및 2-stage 모델을 포함하여 레거시와 최신 모델을 모두 활용하여 성능을 비교하였다.
 - YOLO와 같은 1-stage 모델은 상대적으로 낮은 객체 검출 성능을 보이는 경향이 있었다.
@@ -345,7 +340,6 @@ Frameworks : Detectron2 v0.6, Ultralytics v8.1, mmDetection v3.3.0
 |                |              | Swin-l       |   0.719   |   ✅     |
 |                | Co-Detr      | Swin-l       |   0.665   |        |
 
-</br>
 
 
 > ### Ensemble
