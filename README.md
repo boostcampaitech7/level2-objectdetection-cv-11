@@ -255,9 +255,27 @@
 | Original+SR(Multi-Crop) | DINO  | Swin-l   | |   | |
 
 <!-- </center> -->
-    
 
-</br>
+  
+
+> ### Pseudo Labeling
+- 본 프로젝트에서는 객체 탐지 성능을 향상시키기 위해 1-stage model인 YOLO11에 Pseudo labeling 기법을 적용하고 그 효과를 분석하였다.
+- 더 나은 성능 향상을 위하여 팀 내 가장 예측 성능이 우수한 DINO를 사용하여 Pseudo labeling을 적용하였다.
+- Pseudo labeling 된 데이터의 학습 방식에 따른 성능 비교와 Pseudo labeling 시 신뢰도 임계값(confidence threshold)이 모델 성능에 미치는 영향을 분석하였다.
+- 실험 결과, 객체 탐지 작업에서 Pseudo labeling을 적용할 때 개별 레이블의 품질보다 학습 데이터의 전체적인 양이 모델 성능 향상에 더 중요한 요인임을 알 수 있었다. 또한, 낮은 신뢰도의 예측 결과도 학습 데이터로 포함시키는 것이 모델의 일반화 성능 향상에 기여할 수 있음을 보여준다.
+  
+| **Experiment**      | **Model**                 | **mAP_50(Val)** |
+|:-----------------------:|:--------------------------:|:-----------:|
+| sequential learning      | YOLOv11               | 0.5911     | 
+| Learning at once         | YOLOv11               | 0.5663     |
+
+| **Confidence Score**      | **Model**                 | **mAP_50(Val)** |
+|:-----------------------:|:--------------------------:|:-----------:|
+| 0.25        | YOLOv11               | 0.6320     | 
+| 0.5         | YOLOv11               | 0.5911     |
+| 0.7         | YOLOv11               | 0.5247     |
+
+
 
 > ### Augmentation
 - 객체의 크기와 위치를 고려하여, 데이터 증강 기법으로 RandomResize, RandomCrop, RandAugment를 적용함으로써 성능 개선 효과를 기대하였다.
