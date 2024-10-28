@@ -227,11 +227,11 @@
 
 - 탐색적 데이터 분석(EDA) 결과, 데이터셋 내에 크기가 작고 저화질의 이미지들이 다수 포함되어 있음을 확인하였다.
 - 이를 개선하기 위해, 단일 이미지 초해상도 기법으로 Enhanced Deep Residual Networks for Single Image Super-Resolution 논문에서 제안된 방법을 활용하여 이미지를 2배 해상도로 변환하였다.
-- 변환된 이미지는 Center-crop 및 Multi-crop 방식으로 추가 전처리하여, 기존 학습 데이터와 결합하여 모델 학습에 활용하였다.
-- 실험 결과, Center-crop 방식(이미지 1개 추가)에 비해 Multi-crop 방식을 통해 4배의 학습 데이터를 확보한 경우, 성능이 더 크게 향상됨을 확인할 수 있었다.
+- 변환된 이미지는 Center-crop 및 Quarter-crop 방식으로 추가 전처리하여, 기존 학습 데이터와 결합하여 모델 학습에 활용하였다.
+- 실험 결과, Center-crop 방식(이미지 1개 추가)에 비해 Quarter-crop 방식을 통해 4배의 학습 데이터를 확보한 경우, 성능이 더 크게 향상됨을 확인할 수 있었다.
 
 <center>
-<img src="" width="400" height="">
+<img src="![image](https://github.com/user-attachments/assets/dc254fe5-c61a-49c8-a9c8-4eb10154ad17)" width="400" height="">
 <div align="center">
   <sup>Center-Crop</sup>
 </div>
@@ -239,20 +239,20 @@
 
 
 <center>
-<img src="" width="400" height="">
+<img src="![image](https://github.com/user-attachments/assets/24a1d669-1e79-456b-baf1-e8c28e00a53a)" width="400" height="">
 <div align="center">
-    <sup>Multi-Crop</sup>
+    <sup>Quarter-Crop</sup>
 </div>
 </center>
 
 
 <!-- <center>  -->
 
-| Dataset            | Model | Backbone | Epoch | mAP_50(Val) | mAP_50(Test)
-|:-------:|:----------:|:-----------------------:|:-------:|:---------:|:---------:|
-| Original           | DINO  | Swin-l   | |   | |
-| Original+SR(Center-Crop)      | DINO  | Swin-l   | |   | |
-| Original+SR(Multi-Crop) | DINO  | Swin-l   | |   | |
+| Dataset            | Model | Backbone | Epoch | mAP_50(Val) |
+|:-------:|:----------:|:-----------------------:|:-------:|:---------:|
+| Original           | DINO  | Swin-L   | 12 |  0.7107 |
+| Original + Center-Crop SR | DINO  | Swin-L   | 12 | 0.7138  |
+| Orginal + Quarter-Crop SR | DINO  | Swin-L   | 12 | 0.7182  |
 
 <!-- </center> -->
 
