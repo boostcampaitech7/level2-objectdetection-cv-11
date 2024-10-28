@@ -14,20 +14,18 @@
 
   
 
- 
-
-
-
 ## Dataset
 
 
 <center>
-<img src="https://github.com/Eddie-JUB/Portfolio/assets/71426994/474d0b88-6d5b-43b3-84df-b18b858a17ad" width="700" height="">
 <div align="center">
-  <sup>Example image data w/ 2D Bounding Boxes, annotation data
-</sup>
+  <img src="https://github.com/user-attachments/assets/f0eae989-bb4c-4b5a-ac78-d2081f814259" width="400" height="">
+  <br>
+  <sup>Example image data with 2D Bounding Boxes</sup>
 </div>
 </center>
+
+
 
 ![대회 개요](https://github.com/user-attachments/assets/459d801e-cfa0-438a-8721-fd9b452f4d6b)
 
@@ -86,7 +84,6 @@
 
 |Name|Roles|
 |:-------:|:--------------------------------------------------------------:|
-|Common||
 |임동훈| DINO, KFold, Ensemble, Augmentation, Super Resolution
 |한승수| DDQ, Ensemble, Custom Copy Paste, EDA
 |정아영| YOLOv8, YOLOv11, Pseudo Labeling
@@ -109,28 +106,58 @@
 #  Project
 ##  EDA
 
-<!-- <center>
-<img src="https://github.com/Eddie-JUB/Portfolio/assets/71426994/4dd0e517-83dc-4d7e-9c3f-c6d7db10ed7c" width="700" height="">
-</center> -->
+> ### Class Imbalance
 
-
-> ### Class Imbalance, Object Size
-
-<center>
-<img src="" width="900" height="">
 <div align="center">
-  <sup>Distribution of Bbox area as % of Image area by class
-</sup>
+  <table>
+    <tr>
+      <td>
+        <figure>
+          <img src="https://github.com/user-attachments/assets/9e9448cf-8475-4cc1-80c5-75ed45fc5db8" width="600">
+          <figcaption>A distribution graph showing the number of annotations per class</figcaption>
+        </figure>
+      </td>
+      <td>
+        <figure>
+        <img src="https://github.com/user-attachments/assets/8d20b22d-6f3a-494c-abc8-af0634079378" width="600">
+        <figcaption>Class distribution graph for each fold split with k=5</figcaption>
+        </figure>
+      </td>
+    </tr>
+  </table>
 </div>
-</center>
 
 
-데이터셋에서 Paper, Plastic bag, General trash 클래스가 높은 비중을 차지하고 있어, 전반적으로 데이터의 분포가 불균형함을 확인하였다.
-클래스별 객체의 크기 분포를 분석한 결과, 작은 객체의 빈도는 높았으며, 객체 크기가 커질수록 해당 객체 수가 감소하는 경향을 보였다.
+- 분포를 확인한 결과, 클래스 별 불균형이 심하여 KFold 대신 Train/Validation에 동일한 분포를 적용하기 위해 Stratified K-Fold 적용하였다.
+- Stratified group k-fold (k=5)를 적용하여 5쌍의 train, validation set을 구성하여 학습에 적용하였다.
 
-</br>
+
 
 > ### Object Position
+
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <figure>
+          <img src="https://github.com/user-attachments/assets/751f771a-223e-4aae-b6aa-37fd19530d01" width="600">
+          <figcaption></figcaption>
+        </figure>
+      </td>
+      <td>
+        <figure>
+        <img src="" width="600">
+        <figcaption></figcaption>
+        </figure>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+- 분포를 확인한 결과, 클래스 별 불균형이 심하여 KFold 대신 Train/Validation에 동일한 분포를 적용하기 위해 Stratified K-Fold 적용하였다.
+- Stratified group k-fold (k=5)를 적용하여 5쌍의 train, validation set을 구성하여 학습에 적용하였다.
+
 
 <center>
 <img src="">
@@ -139,7 +166,6 @@
 </sup>
 </div>
 </center>
-
 
 - 이미지 내 객체들의 위치 분포를 분석한 결과, 대부분의 객체가 이미지 중심부에 주로 위치하고 있는 경향이 나타났다.
 </br>
