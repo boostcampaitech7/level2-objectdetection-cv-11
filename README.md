@@ -92,11 +92,11 @@
 |Name|Roles|
 |:-------:|:--------------------------------------------------------------:|
 |Common||
-|임동훈|| DINO, KFold, Ensemble, Augmentation, Super Resolution
-|한승수|| DDQ, Ensemble, Custom Copy Paste, EDA
-|정아영|| YOLOv8, YOLOv11, Pseudo Labeling
-|김대환|| Moderator, YOLOv7, YOLOv8, YOLO MultiScaling
-|김채리|| ATSS, ConvNext, LR Scheduler
+|임동훈| DINO, KFold, Ensemble, Augmentation, Super Resolution
+|한승수| DDQ, Ensemble, Custom Copy Paste, EDA
+|정아영| YOLOv8, YOLOv11, Pseudo Labeling
+|김대환| Moderator, YOLOv7, YOLOv8, YOLO MultiScaling
+|김채리| ATSS, ConvNext, LR Scheduler
 |박윤준| EDA, UniverseNet
 
 
