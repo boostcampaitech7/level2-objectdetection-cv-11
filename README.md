@@ -231,7 +231,7 @@
 - 실험 결과, Center-crop 방식(이미지 1개 추가)에 비해 Quarter-crop 방식을 통해 4배의 학습 데이터를 확보한 경우, 성능이 더 크게 향상됨을 확인할 수 있었다.
 
 <center>
-<img src="![image](https://github.com/user-attachments/assets/dc254fe5-c61a-49c8-a9c8-4eb10154ad17)" width="400" height="">
+<img src="https://github.com/user-attachments/assets/dc254fe5-c61a-49c8-a9c8-4eb10154ad17" width="400" height="">
 <div align="center">
   <sup>Center-Crop</sup>
 </div>
@@ -239,7 +239,7 @@
 
 
 <center>
-<img src="![image](https://github.com/user-attachments/assets/24a1d669-1e79-456b-baf1-e8c28e00a53a)" width="400" height="">
+<img src="https://github.com/user-attachments/assets/24a1d669-1e79-456b-baf1-e8c28e00a53a" width="400" height="">
 <div align="center">
     <sup>Quarter-Crop</sup>
 </div>
