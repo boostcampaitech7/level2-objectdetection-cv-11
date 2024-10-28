@@ -7,30 +7,15 @@
 
 ##  Rank
 
-|Name|Roles|
+|Score|Our Score|
 |:-------:|:--------------------------------------------------------------:|
-|Common||
-|임동훈| DINO, KFold, Ensemble, Augmentation, Super Resolution
-|한승수| DDQ, Ensemble, Custom Copy Paste, EDA
+|Public| <img width="800" src="https://github.com/user-attachments/assets/b7f049e5-e06a-4043-a19d-bfa5fc6d0518">
+|Private| <img width="800" src="https://github.com/user-attachments/assets/27aeb60c-8168-4504-adfd-84385a6d44a3">
 
-<center>
-<img src="" width="700" height="">
-<div align="center">
-  <sup>Test dataset(Public)
-  <img width="721" alt="중간순위" src="https://github.com/user-attachments/assets/b7f049e5-e06a-4043-a19d-bfa5fc6d0518">
+  
 
-</sup>
-</div>
-</center>
+ 
 
-<center>
-<img src="" width="700" height="">
-<div align="center">
-  <sup>Test dataset(Private)
-  <img width="721" alt="최종 순위" src="https://github.com/user-attachments/assets/27aeb60c-8168-4504-adfd-84385a6d44a3">
-</sup>
-</div>
-</center>
 
 
 ## Dataset
