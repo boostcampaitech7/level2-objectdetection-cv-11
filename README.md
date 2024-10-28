@@ -37,7 +37,7 @@
 
 
 
-- **Images & Size :**   (Train), 4871 (Test), (1024, 1024)
+- **Images & Size :**   9754장(train 4883, test 4871) & (1024, 1024)
 - **classes :** General trash, Paper, Paper pack, Metal, Glass, Plastic, Styrofoam, Plastic bag, Battery, Clothing
 <!-- - **Annotations :** Image size, class,  -->
 
