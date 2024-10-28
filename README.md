@@ -21,7 +21,6 @@
 <img src="" width="700" height="">
 <div align="center">
   <sup>Test dataset(Private)
-  ![최종 순위](https://github.com/user-attachments/assets/dc2da23a-a6b8-416b-85a8-35dd2934d2ac)  
 </sup>
 </div>
 </center>
