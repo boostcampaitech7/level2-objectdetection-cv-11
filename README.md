@@ -315,19 +315,11 @@
 > ### Models
 - 1-stage 및 2-stage 모델을 포함하여 레거시와 최신 모델을 모두 활용하여 성능을 비교하였다.
 - YOLO와 같은 1-stage 모델은 상대적으로 낮은 객체 검출 성능을 보이는 경향이 있었다.
-- 최신 연구에서 제안된 DINO, Co-DETR 등의 모델을 학습하고 평가하여, 해당 모델들의 성능을 분석하였다.
+- 최신 연구에서 제안된 DINO, Co-DETR, ATSS 등의 모델을 학습하고 평가하여, 해당 모델들의 성능을 분석하였다.
 - 성능 확인 결과 DINO와 DDQ의 성능이 가장 높았기에 두 모델의 성능을 고도화하여 앙상블에 활용하고자 하였다.
 ```bash
 Frameworks : Detectron2 v0.6, Ultralytics v8.1, mmDetection v3.3.0
 ```
-내용추가!
- <center>
-<img src="https://github.com/FinalCold/Programmers/assets/67350632/6de0cd46-8ee8-4f85-a9cf-1215d2d453fd" width="700" height="">
-<div align="center">
-   <sup>Test dataset(Public)
-</sup>
-</div>
-</center>
 
 
 
