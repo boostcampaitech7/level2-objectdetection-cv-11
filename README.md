@@ -35,6 +35,7 @@
 </div>
 </center>
 
+![대회 개요](https://github.com/user-attachments/assets/459d801e-cfa0-438a-8721-fd9b452f4d6b)
 
 
 - **Images & Size :**   9754장(train 4883, test 4871) & (1024, 1024)
