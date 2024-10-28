@@ -7,6 +7,12 @@
 
 ##  Rank
 
+|Name|Roles|
+|:-------:|:--------------------------------------------------------------:|
+|Common||
+|임동훈| DINO, KFold, Ensemble, Augmentation, Super Resolution
+|한승수| DDQ, Ensemble, Custom Copy Paste, EDA
+
 <center>
 <img src="" width="700" height="">
 <div align="center">
