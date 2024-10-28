@@ -365,6 +365,8 @@ Frameworks : Detectron2 v0.6, Ultralytics v8.1, mmDetection v3.3.0
 |NMW(1:0.5:0.5:1)  |   0.7349   |
 |WBF  |   0.7072   |
 
+</br>
+
 ## Conclusion
 ### LB TImelines
 위와 같은 과정을 거치며 mAP50 값이 우상향하는 그래프를 그리며 성능을 향상시킬 수 있었다.
