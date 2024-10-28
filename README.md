@@ -155,7 +155,7 @@
 </div>
 
 
-- 모든 클래스에서 이미지 내 BBOX들의 위치 분포를 분석한 결과, 대부분의 BBOX(객체)가 이미지 중심부에 주로 위치하고 있는 경향이 나타났다.(정 가운데에 bbox가 몰려 있다.)
+- 모든 클래스에서 이미지 내 BBOX들의 위치 분포를 분석한 결과, 대부분의 BBOX(객체)가 이미지 중심부에 주로 위치하고 있는 경향이 나타났다.
 
 
 > ### Aspect Ratio for bounding boxes by class
@@ -376,7 +376,7 @@ Frameworks : Detectron2 v0.6, Ultralytics v8.1, mmDetection v3.3.0
 </center>
 
 ### Contribution
-1. Augmentation, Copy Paste, Pseudo Labeling, Stratified KFold, Super Resolution 등의 기법을 도입함으로써 모델 성능을 크게 향상
-2. Object Detection 모델들 각각의 특성에 맞게 활용 (1 stage model의 빠른 속도를 살려 다양한 실험 진행, 2 stage model을 활용한 성능 향상)
-3. DINO, DDQ, ATSS 모델들을 적절히 앙상블 하여 0.7423이라는 자체 최고 성능 달성 및 전체 순위 6위 달성
-
+1. 데이터 증강 및 기법 적용 효과 Augmentation, Copy Paste, Pseudo Labeling, Stratified KFold, Super Resolution 등의 기법을 도입함으로써 모델 성능을 크게 향상
+2. 모델 구조 활용 2-Stage 모델(DINO, CO-DETR, DDQ, Cascade Mask R-CNN)은 높은 정확도와 복잡한 장면에서 우수한 성능을 보였으며, 1-Stage 모델(YOLO, UniverseNet, ATSS)은 빠른 학습 속도를 바탕으로 다양한 실험에서 활용
+3. 앙상블 기법 성능: DINO, DDQ, ATSS 모델들을 적절히 앙상블 하여 0.7423이라는 자체 최고 성능 달성 및 전체 순위 6위 달성
+4. 향후 과제: Co-DETR와 UniverseNet 모델을 앙상블 실험에 포함하지 못한 아쉬움이 있으며, 추가적인 실험과 데이터 분석을 통해 성능을 지속적으로 개선할 예정
