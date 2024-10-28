@@ -213,8 +213,8 @@
 
 ##  Pipeline
 <center>
-<img src="" >
 <div align="center">
+  <img src="https://github.com/user-attachments/assets/37cd6586-a033-426f-8b1b-8c504e229c8e" width="700" height="" >
   <sup>Pipeline of Applied Methods 
 </sup>
 </div>
@@ -256,7 +256,31 @@
 
 <!-- </center> -->
 
-  
+> ### Copy Paste with Mosaic
+- Copy-Paste는 instance segmetation 분야에서 다양한 model architecture에 robust하며 학습의 효율을 높이고 성능 향상을 이룬 augmentation 기법이다.
+- mmdetection에 구현된 copy paste는 다른 image의 object가 위치와 크기가 그대로 해당 image에 포개지는 형태였기에 기존 image의 object가 copy paste된 이미지로 인해 가려지는 현상이 발생했다.
+- 이미지를 4분할해 조합하는 Augmentation 기법인 Mosaic에서 영감을 받아 Copy Paste를 Mosaic 방식으로 변형해 copy paste object가 기존의 object를 가리는 현상을 최소화 하고 작은 bbox들이 image의 edge에 분포되도록 유도하였다.
+- copy paste는 특히 2stage model에서 좋은 효과가 있었으며 Psuedo Labelling과 함께 활요할 때 더 효과적이었다.
+
+| **Experiment**      | **Model**                 | **mAP_50(Val)** |
+|:-----------------------:|:--------------------------:|:-----------:|
+| Original    | DDQ          | 0.4939     | 
+| Copy Paste  | DDQ          | 0.5486     |
+
+> ### Augmentation
+- 객체의 크기와 위치를 고려하여, 데이터 증강 기법으로 RandomResize, RandomCrop, RandAugment를 적용함으로써 성능 개선 효과를 기대하였다.
+- 모델의 일반화 성능을 향상시키기 위해 다양한 증강 기법을 적용하였으며, 여러 평가 지표를 바탕으로 최적의 증강 기법을 선정하였다.
+- 기하학적 변환 기법을 적용했을 때 IoU 임계값에 따라 mAP가 크게 변동하는 경향이 관찰되었다.
+- 색상 변환에 RandAugment 기법을 적용한 결과, 모델의 강건성과 성능이 유의미하게 향상되는 것을 확인할 수 있었다.
+
+| **Augmentation**      | **Info**                 | **mAP_50(Val)** |
+|:-----------------------:|:--------------------------:|:-----------:|
+| None                  | -                        | 0.553     | 
+| RandomCrop            | RandomCrop               | 0.564     |
+| RandomCenterCropPad   | CenterCrop + pad         | 0.567     |
+| RandomAffine          | Geometric transformation | 0.560     |
+| PhotoMetricDistortion | Color Jitter             | 0.563     |
+| RandAugment           | Color transformation     | 0.570     |
 
 > ### Pseudo Labeling
 - 본 프로젝트에서는 객체 탐지 성능을 향상시키기 위해 1-stage model인 YOLO11에 Pseudo labeling 기법을 적용하고 그 효과를 분석하였다.
@@ -275,22 +299,14 @@
 | 0.5         | YOLOv11               | 0.5911     |
 | 0.7         | YOLOv11               | 0.5247     |
 
+> ### TTA
+- Test Time Augmentation을 통해 모델의 예측값의 일반화된 성능 향상을 이뤄낼 수 있었다.
 
-
-> ### Augmentation
-- 객체의 크기와 위치를 고려하여, 데이터 증강 기법으로 RandomResize, RandomCrop, RandAugment를 적용함으로써 성능 개선 효과를 기대하였다.
-- 모델의 일반화 성능을 향상시키기 위해 다양한 증강 기법을 적용하였으며, 여러 평가 지표를 바탕으로 최적의 증강 기법을 선정하였다.
-- 기하학적 변환 기법을 적용했을 때 IoU 임계값에 따라 mAP가 크게 변동하는 경향이 관찰되었다.
-- 색상 변환에 RandAugment 기법을 적용한 결과, 모델의 강건성과 성능이 유의미하게 향상되는 것을 확인할 수 있었다.
-
-| **Augmentation**      | **Info**                 | **mAP_50(Val)** |
+| **Experiment**      | **Model**                 | **mAP_50(Val)** |
 |:-----------------------:|:--------------------------:|:-----------:|
-| None                  | -                        | 0.553     | 
-| RandomCrop            | RandomCrop               | 0.564     |
-| RandomCenterCropPad   | CenterCrop + pad         | 0.567     |
-| RandomAffine          | Geometric transformation | 0.560     |
-| PhotoMetricDistortion | Color Jitter             | 0.563     |
-| RandAugment           | Color transformation     | 0.570     |
+| No TTA     | DDQ               | 0.6160     | 
+| TTA        | DDQ               | 0.6446     |
+
 
 
 </br>
@@ -300,47 +316,68 @@
 - 1-stage 및 2-stage 모델을 포함하여 레거시와 최신 모델을 모두 활용하여 성능을 비교하였다.
 - YOLO와 같은 1-stage 모델은 상대적으로 낮은 객체 검출 성능을 보이는 경향이 있었다.
 - 최신 연구에서 제안된 DINO, Co-DETR 등의 모델을 학습하고 평가하여, 해당 모델들의 성능을 분석하였다.
+- 성능 확인 결과 DINO와 DDQ의 성능이 가장 높았기에 두 모델의 성능을 고도화하여 앙상블에 활용하고자 하였다.
 ```bash
 Frameworks : Detectron2 v0.6, Ultralytics v8.1, mmDetection v3.3.0
 ```
 내용추가!
-<!-- <center>
+ <center>
 <img src="https://github.com/FinalCold/Programmers/assets/67350632/6de0cd46-8ee8-4f85-a9cf-1215d2d453fd" width="700" height="">
-<div align="center"> -->
-<!--   <sup>Test dataset(Public) -->
-<!-- </sup>
+<div align="center">
+   <sup>Test dataset(Public)
+</sup>
 </div>
-</center> -->
+</center>
 
 
 
 
 
-<!-- |    Framework   |     Model    |   Backbone   | Val mAP50 |
-|:--------------:|:------------:|:------------:|:---------:|
-| Detectron 2    | Faster RCNN  | R50          |   0.450   |
-|                | Cascade RCNN |              |   0.452   |
-| Yolo v8        | Yolo v8m     | CSPDarknet53 |   0.414   |
-|                | Yolo v8x     |              |   0.474   |
-| mmDetection v3 | Cascade RCNN | R50          |   0.458   |
-|                |              | ConvNext-s   |   0.554   |
-|                |              | Swin-t       |   0.512   |
-|                | DDQ          | R50          |   0.560   |
-|                |              | Swin-l       |   0.677   |
-|                | DINO         | R101         |   0.580   |
-|                |              | Swin-l       |   0.719   |
-|                | Co-Detr      | Swin-l       |   0.717   |
- -->
+|    **Framework**   |     **Model**    |   **Backbone**   | **Val mAP50** | **Check** |
+|:--------------:|:------------:|:------------:|:---------:|:---------:|
+| Detectron 2    | Faster RCNN  | R50          |   0.450   |        |
+|                | Cascade RCNN |              |   0.452   |        |
+| Yolo v8        | Yolo v8m     | CSPDarknet53 |   0.414   |        |
+|                | Yolo v8x     |              |   0.474   |        |
+| mmDetection v3 | Cascade RCNN | R50          |   0.458   |        |
+|                |              | ConvNext-s   |   0.554   |        |
+|                |              | Swin-t       |   0.512   |        |
+|                | DDQ          | R50          |   0.560   |        |
+|                |              | Swin-l       |   0.677   |   ✅     |
+|                | DINO         | R101         |   0.580   |        |
+|                |              | Swin-l       |   0.719   |   ✅     |
+|                | Co-Detr      | Swin-l       |   0.665   |        |
 
 </br>
 
 
 > ### Ensemble
 - 모델별 Confusion Matrix를 분석하여 각 모델의 특성을 파악하고, 최적의 모델 조합을 결정하였다.
+- 최종 앙상블 모델 조합은 ATSS, DINO, DDQ를 활용한 조합이었다.
 - WBF (Weighted Box Fusion) 기법을 적용했으나 성능 향상에는 큰 효과가 없었다.
 - 최종적으로 NMS (Non-Maximum Suppression) 기법을 활용하여 최종 제출 결과물을 생성하였다.
 
-| Models                   | Average mAP_50(Val) | Ensemble mAP_50(Test) |
-|:-------------------------------:|:-------------:|:-----------------:|
-|내용추가 |      |       |
-|내용추가   |      |       |
+| Models                   | Ensemble mAP_50(Test) |
+|:-------------------------------:|:-------------:|
+|DDQ + DINO |   0.7410   |
+|**DDQ + DINO + ATSS**   |   **0.7423**   |
+|DDQ + DINO + ATSS + YOLO11  |   0.7003   |
+|DDQ + DINO + ATSS + Cascade Mask RCNN  |   0.7294   |
+|DDQ + DINO + Cascade Mask RCNN  |   0.7293   |
+
+| Ensemble Technology             | Ensemble mAP_50(Test) |
+|:-------------------------------:|:-------------:|
+|**NMS** |   **0.7423**   |
+|NMW(1:2:1:1)   |   **0.7373**   |
+|NMW(1:0.5:0.5:1)  |   0.7349   |
+|WBF  |   0.7072   |
+
+## Conclusion
+### LB TImelines
+위와 같은 과정을 거치며 mAP50 값이 우상향하는 그래프를 그리며 성능을 향상시킬 수 있었다.
+
+### Contribution
+1. Augmentation, Copy Paste, Pseudo Labeling, Stratified KFold, Super Resolution 등의 기법을 도입함으로써 모델 성능을 크게 향상
+2. Object Detection 모델들 각각의 특성에 맞게 활용 (1 stage model의 빠른 속도를 살려 다양한 실험 진행, 2 stage model을 활용한 성능 향상)
+3. DINO, DDQ, ATSS 모델들을 적절히 앙상블 하여 0.7423이라는 자체 최고 성능 달성 및 전체 순위 6위 달성
+
