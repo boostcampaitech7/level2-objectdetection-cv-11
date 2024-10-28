@@ -1,0 +1,13 @@
+python train.py --device 0 --batch-size 8 --epochs 30 --img 640 640 --data data/custom_data.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7-custom.yaml --name yolov7-custom --weights yolov7x.pt
+
+python train.py --workers  1 --device 0 --batch-size 8 --epochs 30 --img 1024 1024 --data data/custom_data.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7-custom.yaml --name yolov7-custom --weights yolov7-tiny.pt
+
+python train.py --workers  1 --device 0 --batch-size 8 --epochs 30 --img 640 640 --data data/custom_data.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7x.yaml --name yolov7-custom --weights yolov7x.pt
+
+python train.py --workers  1 --device 0 --batch-size 8 --epochs 30 --img 1024 1024 --data data/custom_data.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7x.yaml --name yolov7-custom --weights yolov7x.pt
+
+python train.py --workers  1 --device 0 --batch-size 8 --epochs 30 --img 1280 1280 --data data/custom_data.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7x.yaml --name yolov7-custom --weights yolov7x.pt
+
+
+relabeling
+python train.py --workers  1 --device 0 --batch-size 8 --epochs 30 --img 640 640 --data data/custom_data_relabeling.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7x.yaml --name yolov7-custom --weights yolov7x.pt
