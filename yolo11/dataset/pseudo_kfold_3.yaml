@@ -1,0 +1,22 @@
+nc: 10
+train: /home/oem/ayeong/kfold/train_pseudo_kfold_3/images
+val: /home/oem/ayeong/kfold/val_pseudo_kfold_3/images
+test: /home/oem/ayeong/dataset/test
+
+labels:
+  train: /home/oem/ayeong/kfold/train_pseudo_kfold_3/labels
+  val: /home/oem/ayeong/kfold/val_pseudo_kfold_3/labels
+
+names:
+  0: General trash
+  1: Paper
+  2: Paper pack
+  3: Metal
+  4: Glass
+  5: Plastic
+  6: Styrofoam
+  7: Plastic bag
+  8: Battery
+  9: Clothing
+
+
