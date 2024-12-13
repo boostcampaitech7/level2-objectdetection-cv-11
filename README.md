@@ -255,7 +255,7 @@
 |:-------:|:----------:|:-----------------------:|:-------:|:---------:|
 | Original           | DINO  | Swin-L   | 12 |  0.7107 |
 | Original + Center-Crop SR | DINO  | Swin-L   | 12 | 0.7138  |
-| Orginal + Quarter-Crop SR | DINO  | Swin-L   | 12 | 0.7182  |
+| Orginal + Quarter-Crop SR | DINO  | Swin-L   | 12 | 0.7292  |
 
 <!-- </center> -->
 
